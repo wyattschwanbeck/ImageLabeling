@@ -9,59 +9,84 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.IO;
-using ScreenRecordCapture.Recording;
+using ScreenRecordCapture.Annotation;
 
 namespace ScreenRecordCapture
 {
-    public partial class DynaCapture : Form
+    public partial class LabelImagesWindow : Form
     {
-        public DynaCapture()
+        private List<FileInfo> _Imgfiles = new List<FileInfo>();
+        private Dictionary<string, List<BoundingBox>> ImgBoundingBoxes;
+        private int _selectedIndex;
+        private int _classLabel=-1;
+        public LabelImagesWindow()
         {
+            ImgBoundingBoxes = new Dictionary<string, List<BoundingBox>>();
+
+            boundingBoxes = new List<BoundingBox>();
             InitializeComponent();
-            ScreensToChooseFrom.DataSource = Enumerable.Range(1, Screen.AllScreens.Length).ToList();
             
-            setImage(CaptureMyScreen(GetScreen()));
+            //ScreensToChooseFrom.DataSource = Enumerable.Range(1, Screen.AllScreens.Length).ToList();
+            
+            //setImage(CaptureMyScreen(GetScreen()));
         }
 
 
 
-        private bool Recording;
-        private int ScreenNum;
-
-        private RecordQueue RecQ;
-        
-        //Capture locations and set details for overlay selection
-        private Point RectStartPoint;
-        private Rectangle Rect = new Rectangle();
-        private Brush selectionBrush = new SolidBrush(Color.FromArgb(100, 72, 145, 220));
+        private List<BoundingBox> boundingBoxes;
+        private BoundingBox SelectedBoundingBox;
 
         // Start Rectangle
         //
         private void pictureBox1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            // Determine the initial rectangle coordinates...
-            RectStartPoint = e.Location;
-            Recording = false;
-            Invalidate();
+            
+            if (pictureBox1.BackgroundImage != null && _classLabel>-1)
+            {
+                Rectangle imgRect = new Rectangle(pictureBox1.Location, new Size(pictureBox1.BackgroundImage.Width, pictureBox1.BackgroundImage.Height));
+                if (imgRect.Contains(e.Location))
+                {
+                    SelectedBoundingBox = null;
+                    //Check if click 
+                    foreach (BoundingBox box in boundingBoxes)
+                        if (box.boundingBox.Contains(e.Location))
+                        {
+                            SelectedBoundingBox = box;
+                            SelectedBoundingBox.setSelectedCircles(e.Location);
+                            break;
+                        }
+                    if (SelectedBoundingBox == null)
+                    {
+                        this.needsAdded = true;
+                        //this.addSizeSatisfied = false;
+                        SelectedBoundingBox = new BoundingBox(e.Location, e.Location, this.listBoxImageClasses.Items[_classLabel].ToString());
+                        
+                    }
+                        
+                    this.pictureBox1.Invalidate();
+                }
+            }
+            
         }
-
-        // Draw Rectangle
-        //
+        private bool needsAdded = false;
+        //private bool addSizeSatisfied = false;
         private void pictureBox1_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Left)
+            if (e.Button != MouseButtons.Left && this.pictureBox1.BackgroundImage!=null)
                 return;
-            Point tempEndPoint = e.Location;
-            Rect.Location = new Point(
-                Math.Min(RectStartPoint.X, tempEndPoint.X),
-                Math.Min(RectStartPoint.Y, tempEndPoint.Y));
-            Rect.Size = new Size(
-                Math.Abs(RectStartPoint.X - tempEndPoint.X),
-                Math.Abs(RectStartPoint.Y - tempEndPoint.Y));
+            //Point tempEndPoint = e.Location;
+            if(SelectedBoundingBox!=null)
+            {
+                SelectedBoundingBox.UpdateEndPoint(e.Location);
 
-            
-
-
+                if (this.needsAdded)
+                    if (SelectedBoundingBox.boundingBox.Height > 10 && SelectedBoundingBox.boundingBox.Width > 10)
+                    {
+                        this.needsAdded = false;
+                        boundingBoxes.Add(SelectedBoundingBox);
+                    }
+            }
+                
             pictureBox1.Invalidate();
         }
 
@@ -70,11 +95,16 @@ namespace ScreenRecordCapture
         private void pictureBox1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             // Draw the rectangle...
-            if (pictureBox1.BackgroundImage != null)
+            if (pictureBox1.BackgroundImage != null && _classLabel>-1)
             {
-                if (Rect != null && Rect.Width > 0 && Rect.Height > 0)
+                
+                foreach(BoundingBox box in boundingBoxes)
                 {
-                    e.Graphics.FillRectangle(selectionBrush, Rect);
+                    box.DrawBoundingBox(sender,e);
+                }
+                if (SelectedBoundingBox != null && SelectedBoundingBox.boundingBox.Width > 0 && SelectedBoundingBox.boundingBox.Height > 0)
+                {
+                    SelectedBoundingBox.DrawSelectCircles(sender, e);
                 }
             }
         }
@@ -83,69 +113,32 @@ namespace ScreenRecordCapture
         {
             if (e.Button == MouseButtons.Right)
             {
-                if (Rect.Contains(e.Location))
+                
+            }else if(this.pictureBox1.BackgroundImage!=null && this._classLabel>-1)
+            {
+                this.needsAdded = false;
+                //this.addSizeSatisfied = false;
+                double baseW = int.Parse(BaseWidthTxt.Text);
+                double baseH = int.Parse(BaseHeightTxt.Text);
+                double AdjW = pictureBox1.BackgroundImage.Width;
+                double AdjH = pictureBox1.BackgroundImage.Height;
+
+
+                if (SelectedBoundingBox.boundingBox.Size.Width > 0)
                 {
-                    System.Console.WriteLine("Right click");
+                    txtAdjWidth.Text = Math.Round((SelectedBoundingBox.boundingBox.Size.Width / AdjW) * baseW,1).ToString();
+                    txtAdjustedHeight.Text = Math.Round((SelectedBoundingBox.boundingBox.Size.Height / AdjH) * baseH,1).ToString();
+                    txtAdjustedTop.Text = Math.Round((SelectedBoundingBox.boundingBox.Top / AdjH) * baseH,1).ToString();
+                    txtAdjustedLeft.Text = Math.Round((SelectedBoundingBox.boundingBox.Left / AdjW) * baseW,1).ToString();
                 }
+                SelectedBoundingBox.setSelectedCircles(new Point(-1, -1));
             }
-            double baseW = int.Parse(BaseWidthTxt.Text);
-            double baseH = int.Parse(BaseHeightTxt.Text);
-            double AdjW = pictureBox1.Width;
-            double AdjH = pictureBox1.Height;
+            this.pictureBox1.Invalidate();
             
 
-            if (Rect.Size.Width > 0)
-            {
-                txtAdjWidth.Text = Math.Round((Rect.Size.Width / AdjW) * baseW).ToString();
-                txtAdjustedHeight.Text = Math.Round((Rect.Size.Height / AdjH) * baseH).ToString();
-                txtAdjustedTop.Text = Math.Round((Rect.Top / AdjH) * baseH).ToString();
-                txtAdjustedLeft.Text = Math.Round((Rect.Left / AdjW) * baseW).ToString();
-            }
-
-            setImage(CaptureMyScreen(ScreenNum));
         }
 
         
-
-        public static Bitmap CaptureMyScreen(int ScreenNum)
-
-        {
-
-            try
-
-            {
-                //Creating a Rectangle object which will  
-                //capture our Current Screen
-                Rectangle captureRectangle = Screen.AllScreens[ScreenNum].Bounds;
-                
-                //Creating a new Bitmap object
-                Bitmap captureBitmap = new Bitmap(captureRectangle.Width, captureRectangle.Height, PixelFormat.Format32bppArgb);
-
-
-
-                //Creating a New Graphics Object
-                Graphics captureGraphics = Graphics.FromImage(captureBitmap);
-
-
-
-                //Copying Image from The Screen
-                captureGraphics.CopyFromScreen(captureRectangle.Left, captureRectangle.Top, 0, 0, captureRectangle.Size);
-
-                return captureBitmap;
-
-            }
-
-            catch (Exception ex)
-
-            {
-
-                System.Console.WriteLine(ex.Message);
-                
-            }
-
-            return null;
-
-        }
 
         private void setImage(Bitmap tempImg)
         {
@@ -164,90 +157,65 @@ namespace ScreenRecordCapture
             }
         }
 
-        public int GetScreen()
-        {
-            return ScreenNum;
-        
-        }
 
-
-        private void ScreensToChooseFrom_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.ScreenNum = int.Parse(ScreensToChooseFrom.SelectedValue.ToString()) - 1;
-            setImage(CaptureMyScreen(GetScreen()));
-
-        }
-
-        private async void Record_Click(object sender, EventArgs e)
-        {
-            if (Recording)
-            {
-                Recording = false;
-                Record.Text = "Record";   
-                //RecQ = null;
-                
-            } else
-            {
-                Record.Text = "Recording...";
-                RecQ = new RecordQueue( GetScreen(),
-                                        int.Parse(txtAdjustedHeight.Text),
-                                        int.Parse(txtAdjWidth.Text),
-                                        int.Parse(txtAdjustedLeft.Text),
-                                        int.Parse(txtAdjustedTop.Text));
-                Recording = true;
-                Task<int> RecTask = new Task<int>(FormRecord);
-                RecTask.Start();
-                int RecCount = await RecTask;
-
-            }
-
-        }
-
-        public int FormRecord()
-        {
-            DateTime LastCapture = DateTime.Now;
-            TimeSpan TS = TimeSpan.FromMilliseconds(0);
-            int captures = 0;
-            while (Recording)
-            {
-                if(DateTime.Now- LastCapture>= TS)
-                {
-// RecQ.CaptureMyScreen(LastCapture, );
-                    LastCapture = DateTime.Now;
-                    captures++;
-                    
-                }
-                
-            }
-            //RecQ.SaveAnimatedFrames();
-           RecQ.SaveAnimatedGifImage();
-            return captures;
-            
-        }
-
-        private void DynaCapture_DragDrop(object sender, DragEventArgs e)
-        {
-             setImage(CaptureMyScreen(ScreenNum));
-        }
-
-        private void DynaCapture_KeyDown(object sender, KeyEventArgs e)
-        {
-
-        }
-
-        private void btnRecordInput_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void txtAdjustedTop_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void Record_Click_1(object sender, EventArgs e)
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //FolderBrowserDialogSelectImgDir.ShowDialog();
+            if(FolderBrowserDialogSelectImgDir.ShowDialog() == DialogResult.OK)
+            {
+                txtImgDirectory.Text = FolderBrowserDialogSelectImgDir.SelectedPath;
+                DirectoryInfo imgInfo = new DirectoryInfo(FolderBrowserDialogSelectImgDir.SelectedPath);
+                this._Imgfiles = imgInfo.EnumerateFiles("*jpg").ToList();
+                this.lblImgCount.Text = this._Imgfiles.Count.ToString();
+                setImage(new Bitmap(this._Imgfiles.First().FullName));
+
+            }
+                
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            if(this._selectedIndex<this._Imgfiles.Count-1)
+                this._selectedIndex += 1;
+            setImage(new Bitmap(this._Imgfiles[this._selectedIndex].FullName));
+        }
+
+        private void btnPrevious_Click(object sender, EventArgs e)
+        {
+            if (this._selectedIndex >0)
+                this._selectedIndex -= 1;
+            setImage(new Bitmap(this._Imgfiles[this._selectedIndex].FullName));
+        }
+
+        private void listBoxImages_KeyDown(object sender, KeyEventArgs e)
         {
 
+        }
+
+        private void LabelImagesWindow_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void btnAddClass_Click(object sender, EventArgs e)
+        {
+            //TODO Validate input is onlyCharacters and numbers via regex
+            if (this.txtClassInput.Text != "")
+            {
+                this.listBoxImageClasses.Items.Add(this.txtClassInput.Text);
+            }
+        }
+
+        private void listBoxImageClasses_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this._classLabel = this.listBoxImageClasses.SelectedIndex;
         }
     }
 

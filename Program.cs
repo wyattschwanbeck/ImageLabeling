@@ -16,7 +16,7 @@ namespace ScreenRecordCapture
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new DynaCapture());
+            Application.Run(new LabelImagesWindow());
         }
     }
 }
