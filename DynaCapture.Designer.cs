@@ -55,6 +55,7 @@
             this.txtClassInput = new System.Windows.Forms.TextBox();
             this.btnAddClass = new System.Windows.Forms.Button();
             this.btnSaveXML = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,68 +76,76 @@
             // HeightLbl
             // 
             this.HeightLbl.AutoSize = true;
-            this.HeightLbl.Location = new System.Drawing.Point(1011, 575);
+            this.HeightLbl.Location = new System.Drawing.Point(1002, 516);
             this.HeightLbl.Name = "HeightLbl";
             this.HeightLbl.Size = new System.Drawing.Size(44, 13);
             this.HeightLbl.TabIndex = 4;
             this.HeightLbl.Text = "Height: ";
+            this.HeightLbl.Visible = false;
             // 
             // WidthLbl
             // 
             this.WidthLbl.AutoSize = true;
-            this.WidthLbl.Location = new System.Drawing.Point(1011, 608);
+            this.WidthLbl.Location = new System.Drawing.Point(823, 461);
             this.WidthLbl.Name = "WidthLbl";
             this.WidthLbl.Size = new System.Drawing.Size(38, 13);
             this.WidthLbl.TabIndex = 5;
             this.WidthLbl.Text = "Width:";
+            this.WidthLbl.Visible = false;
             // 
             // BaseHeightTxt
             // 
             this.BaseHeightTxt.Enabled = false;
-            this.BaseHeightTxt.Location = new System.Drawing.Point(1055, 572);
+            this.BaseHeightTxt.Location = new System.Drawing.Point(1046, 513);
             this.BaseHeightTxt.Name = "BaseHeightTxt";
             this.BaseHeightTxt.Size = new System.Drawing.Size(62, 20);
             this.BaseHeightTxt.TabIndex = 6;
+            this.BaseHeightTxt.Visible = false;
             // 
             // BaseWidthTxt
             // 
             this.BaseWidthTxt.Enabled = false;
-            this.BaseWidthTxt.Location = new System.Drawing.Point(1055, 605);
+            this.BaseWidthTxt.Location = new System.Drawing.Point(867, 458);
             this.BaseWidthTxt.Name = "BaseWidthTxt";
             this.BaseWidthTxt.Size = new System.Drawing.Size(62, 20);
             this.BaseWidthTxt.TabIndex = 7;
+            this.BaseWidthTxt.Visible = false;
             // 
             // txtAdjWidth
             // 
-            this.txtAdjWidth.Location = new System.Drawing.Point(1054, 520);
+            this.txtAdjWidth.Location = new System.Drawing.Point(1045, 461);
             this.txtAdjWidth.Name = "txtAdjWidth";
             this.txtAdjWidth.Size = new System.Drawing.Size(63, 20);
             this.txtAdjWidth.TabIndex = 8;
+            this.txtAdjWidth.Visible = false;
             // 
             // lblAdjustedWidth
             // 
             this.lblAdjustedWidth.AutoSize = true;
-            this.lblAdjustedWidth.Location = new System.Drawing.Point(969, 523);
+            this.lblAdjustedWidth.Location = new System.Drawing.Point(960, 464);
             this.lblAdjustedWidth.Name = "lblAdjustedWidth";
             this.lblAdjustedWidth.Size = new System.Drawing.Size(82, 13);
             this.lblAdjustedWidth.TabIndex = 9;
             this.lblAdjustedWidth.Text = "Selection Width";
+            this.lblAdjustedWidth.Visible = false;
             // 
             // lblAdjustedHeight
             // 
             this.lblAdjustedHeight.AutoSize = true;
-            this.lblAdjustedHeight.Location = new System.Drawing.Point(966, 549);
+            this.lblAdjustedHeight.Location = new System.Drawing.Point(957, 490);
             this.lblAdjustedHeight.Name = "lblAdjustedHeight";
             this.lblAdjustedHeight.Size = new System.Drawing.Size(85, 13);
             this.lblAdjustedHeight.TabIndex = 11;
             this.lblAdjustedHeight.Text = "Selection Height";
+            this.lblAdjustedHeight.Visible = false;
             // 
             // txtAdjustedHeight
             // 
-            this.txtAdjustedHeight.Location = new System.Drawing.Point(1054, 546);
+            this.txtAdjustedHeight.Location = new System.Drawing.Point(1045, 487);
             this.txtAdjustedHeight.Name = "txtAdjustedHeight";
             this.txtAdjustedHeight.Size = new System.Drawing.Size(63, 20);
             this.txtAdjustedHeight.TabIndex = 10;
+            this.txtAdjustedHeight.Visible = false;
             // 
             // lblAdjTop
             // 
@@ -149,36 +158,40 @@
             // 
             // txtAdjustedTop
             // 
-            this.txtAdjustedTop.Location = new System.Drawing.Point(1054, 631);
+            this.txtAdjustedTop.Location = new System.Drawing.Point(866, 484);
             this.txtAdjustedTop.Name = "txtAdjustedTop";
             this.txtAdjustedTop.Size = new System.Drawing.Size(63, 20);
             this.txtAdjustedTop.TabIndex = 12;
+            this.txtAdjustedTop.Visible = false;
             this.txtAdjustedTop.TextChanged += new System.EventHandler(this.txtAdjustedTop_TextChanged);
             // 
             // lblAdjLeft
             // 
             this.lblAdjLeft.AutoSize = true;
-            this.lblAdjLeft.Location = new System.Drawing.Point(954, 660);
+            this.lblAdjLeft.Location = new System.Drawing.Point(766, 513);
             this.lblAdjLeft.Name = "lblAdjLeft";
             this.lblAdjLeft.Size = new System.Drawing.Size(97, 13);
             this.lblAdjLeft.TabIndex = 15;
             this.lblAdjLeft.Text = "Selection Left Pixel";
+            this.lblAdjLeft.Visible = false;
             // 
             // txtAdjustedLeft
             // 
-            this.txtAdjustedLeft.Location = new System.Drawing.Point(1054, 657);
+            this.txtAdjustedLeft.Location = new System.Drawing.Point(866, 510);
             this.txtAdjustedLeft.Name = "txtAdjustedLeft";
             this.txtAdjustedLeft.Size = new System.Drawing.Size(63, 20);
             this.txtAdjustedLeft.TabIndex = 14;
+            this.txtAdjustedLeft.Visible = false;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(954, 634);
+            this.label2.Location = new System.Drawing.Point(766, 487);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(98, 13);
             this.label2.TabIndex = 16;
             this.label2.Text = "Selection Top Pixel";
+            this.label2.Visible = false;
             // 
             // txtImgDirectory
             // 
@@ -201,9 +214,9 @@
             // 
             this.selectFolder.Location = new System.Drawing.Point(555, 482);
             this.selectFolder.Name = "selectFolder";
-            this.selectFolder.Size = new System.Drawing.Size(75, 23);
+            this.selectFolder.Size = new System.Drawing.Size(112, 23);
             this.selectFolder.TabIndex = 19;
-            this.selectFolder.Text = "Select";
+            this.selectFolder.Text = "Select Folder";
             this.selectFolder.UseVisualStyleBackColor = true;
             this.selectFolder.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -227,6 +240,7 @@
             // 
             // btnPrevious
             // 
+            this.btnPrevious.Enabled = false;
             this.btnPrevious.Location = new System.Drawing.Point(266, 510);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(75, 23);
@@ -237,6 +251,7 @@
             // 
             // btnNext
             // 
+            this.btnNext.Enabled = false;
             this.btnNext.Location = new System.Drawing.Point(452, 510);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
@@ -291,11 +306,23 @@
             this.btnSaveXML.UseVisualStyleBackColor = true;
             this.btnSaveXML.Click += new System.EventHandler(this.btnSaveXML_Click);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(533, 512);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(93, 17);
+            this.checkBox1.TabIndex = 30;
+            this.checkBox1.Text = "Save On Next";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.Click += new System.EventHandler(this.checkBox1_Click);
+            // 
             // LabelImagesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1155, 756);
+            this.ClientSize = new System.Drawing.Size(1155, 564);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.btnSaveXML);
             this.Controls.Add(this.btnAddClass);
             this.Controls.Add(this.txtClassInput);
@@ -360,6 +387,7 @@
         private System.Windows.Forms.TextBox txtClassInput;
         private System.Windows.Forms.Button btnAddClass;
         private System.Windows.Forms.Button btnSaveXML;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

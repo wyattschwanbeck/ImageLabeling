@@ -182,12 +182,18 @@ namespace ScreenRecordCapture
                     this.listBoxImages.Items.Add(fileInfo.FullName);
                 this.btnSaveXML.Enabled = true;
                 this._selectedIndex = 0;
+                checkSaved();
+                this.btnNext.Enabled = true;
+                this.btnPrevious.Enabled = true;
             }
                 
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
+            //save on next check
+            if (this.checkBox1.Checked)
+                SaveBoundingBoxes();
             if (this._selectedIndex < this._Imgfiles.Count - 1)
                 this._selectedIndex += 1;
             setImage(new Bitmap(_Imgfiles[this._selectedIndex].FullName));
@@ -217,7 +223,12 @@ namespace ScreenRecordCapture
                     {
                         this.boundingBoxes.Add(new BoundingBox(new Point(int.Parse(resultxMin[i].InnerText), int.Parse(resultyMin[i].InnerText)),
                         new Point(int.Parse(resultxMax[i].InnerText), int.Parse(resultyMax[i].InnerText)), resultLabels[i].InnerText));
-                    this.SelectedBoundingBox = this.boundingBoxes.Last();
+                        this.SelectedBoundingBox = this.boundingBoxes.Last();
+                        if (!this.listBoxImageClasses.Items.Contains(resultLabels[i].InnerText))
+                        {
+                            this.listBoxImageClasses.Items.Add(resultLabels[i].InnerText);
+                            this.listBoxImageClasses.SelectedIndex = 0;
+                        }
                     }
                     this.pictureBox1.Invalidate();
 
@@ -336,6 +347,11 @@ namespace ScreenRecordCapture
 
 
             }
+        }
+
+        private void checkBox1_Click(object sender, EventArgs e)
+        {
+            checkBox1.Checked = !checkBox1.Checked;
         }
     }
 
