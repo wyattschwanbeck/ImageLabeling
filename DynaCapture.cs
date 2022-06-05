@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.IO;
 using ScreenRecordCapture.Annotation;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ScreenRecordCapture
 {
@@ -172,19 +174,61 @@ namespace ScreenRecordCapture
             {
                 txtImgDirectory.Text = FolderBrowserDialogSelectImgDir.SelectedPath;
                 DirectoryInfo imgInfo = new DirectoryInfo(FolderBrowserDialogSelectImgDir.SelectedPath);
-                this._Imgfiles = imgInfo.EnumerateFiles("*jpg").ToList();
+                this._Imgfiles = imgInfo.EnumerateFiles("*jpg",SearchOption.AllDirectories).ToList();
                 this.lblImgCount.Text = this._Imgfiles.Count.ToString();
                 setImage(new Bitmap(this._Imgfiles.First().FullName));
-
+                this.listBoxImages.Items.Clear();
+                foreach (FileInfo fileInfo in this._Imgfiles)
+                    this.listBoxImages.Items.Add(fileInfo.FullName);
+                this.btnSaveXML.Enabled = true;
+                this._selectedIndex = 0;
             }
                 
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if(this._selectedIndex<this._Imgfiles.Count-1)
+            if (this._selectedIndex < this._Imgfiles.Count - 1)
                 this._selectedIndex += 1;
-            setImage(new Bitmap(this._Imgfiles[this._selectedIndex].FullName));
+            setImage(new Bitmap(_Imgfiles[this._selectedIndex].FullName));
+            checkSaved();
+        }
+        private void checkSaved()
+        {
+            FileInfo fi = _Imgfiles[this._selectedIndex];
+            string xmlCounterpart = fi.Directory.FullName + '\\' + fi.Name.Replace("jpg","xml");
+            
+            if (File.Exists(xmlCounterpart))
+            {
+                this.boundingBoxes.Clear();
+                var xmlStr = File.ReadAllText(xmlCounterpart);
+
+
+                XmlDocument str = new XmlDocument();
+                
+                str.LoadXml(xmlStr);
+                var resultxMin = str.SelectNodes("/annotation/object/bndbox/xmax");
+                var resultxMax = str.SelectNodes("/annotation/object/bndbox/xmax");
+                var resultyMin = str.SelectNodes("/annotation/object/bndbox/ymin");
+                var resultyMax = str.SelectNodes("/annotation/object/bndbox/ymax");
+                var resultLabels = str.SelectNodes("/annotation/object/name");
+                //try
+                //{
+
+
+                    for (int i = 0; i < resultxMin.Count; i++)
+                    {
+                        this.boundingBoxes.Add(new BoundingBox(new Point(int.Parse(resultxMin[i].InnerText), int.Parse(resultyMin[i].InnerText)),
+                            new Point(int.Parse(resultxMax[i].InnerText), int.Parse(resultyMax[i].InnerText)), resultLabels[i].InnerText));
+                    }
+                    this.pictureBox1.Invalidate();
+                //}
+                //catch(Exception except)
+                //{ Console.WriteLine(except.Message);
+                //}
+                //Console.WriteLine(result);
+            }
+
         }
 
         private void btnPrevious_Click(object sender, EventArgs e)
@@ -192,6 +236,7 @@ namespace ScreenRecordCapture
             if (this._selectedIndex >0)
                 this._selectedIndex -= 1;
             setImage(new Bitmap(this._Imgfiles[this._selectedIndex].FullName));
+            checkSaved();
         }
 
         private void listBoxImages_KeyDown(object sender, KeyEventArgs e)
@@ -216,6 +261,82 @@ namespace ScreenRecordCapture
         private void listBoxImageClasses_SelectedIndexChanged(object sender, EventArgs e)
         {
             this._classLabel = this.listBoxImageClasses.SelectedIndex;
+        }
+
+        private void btnSaveXML_Click(object sender, EventArgs e)
+        {
+            //https://towardsdatascience.com/coco-data-format-for-object-detection-a4c5eaf518c5#:~:text=Pascal%20VOC%20is%20an%20XML,for%20training%2C%20testing%20and%20validation.
+            FileInfo fi =_Imgfiles[this._selectedIndex];
+            string[] parentFolders = fi.FullName.Split('\\');
+            DirectoryInfo directoryInfo = new DirectoryInfo(fi.Directory.FullName);
+            
+            using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace("jpg", "xml")))
+            {
+                writer.WriteStartElement("annotation");
+                writer.WriteStartElement("folder");
+                writer.WriteString(parentFolders[parentFolders.Length-1]);
+                writer.WriteEndElement();
+                writer.WriteStartElement("filename");
+                writer.WriteString(fi.Name);
+                writer.WriteEndElement();
+                writer.WriteStartElement("path");
+                writer.WriteString(fi.FullName);
+                writer.WriteEndElement();
+                writer.WriteStartElement("size");
+                writer.WriteStartElement("width");
+                writer.WriteString(this.pictureBox1.BackgroundImage.Width.ToString());
+                writer.WriteEndElement();
+                writer.WriteStartElement("height");
+                writer.WriteString(this.pictureBox1.BackgroundImage.Height.ToString());
+                writer.WriteEndElement();
+                writer.WriteStartElement("depth");
+                writer.WriteString("3");//System.Drawing.Image.GetPixelFormatSize(this.pictureBox1.BackgroundImage.PixelFormat).ToString());
+                writer.WriteEndElement();
+                //End Size
+                writer.WriteEndElement();
+
+                foreach(BoundingBox boundingBox in boundingBoxes)
+                {
+                    writer.WriteStartElement("object");
+                    writer.WriteStartElement("name");
+                    writer.WriteString(boundingBox.label);
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("pose");
+                    writer.WriteString("unspecified");
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("truncated");
+                    writer.WriteString("0");
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("difficult");
+                    writer.WriteString("1");
+                    writer.WriteEndElement();
+                    
+                    writer.WriteStartElement("bndbox");
+                    writer.WriteStartElement("xmin");
+                    writer.WriteString(boundingBox.startPoint.X.ToString());
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("ymin");
+                    writer.WriteString(boundingBox.startPoint.Y.ToString());
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("xmax");
+                    writer.WriteString(boundingBox.endPoint.X.ToString());
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("ymax");
+                    writer.WriteString(boundingBox.endPoint.Y.ToString());
+                    writer.WriteEndElement();
+                    //End Bounding Box
+                    writer.WriteEndElement();
+                    //End Object
+                    writer.WriteEndElement();
+                }
+
+
+                //End Annotation
+                writer.WriteEndElement();
+                writer.Flush();
+                
+                
+            }
         }
     }
 

@@ -52,16 +52,16 @@
             this.btnNext = new System.Windows.Forms.Button();
             this.listBoxImageClasses = new System.Windows.Forms.ListBox();
             this.listBoxImages = new System.Windows.Forms.ListBox();
-            this.lblImageSelection = new System.Windows.Forms.Label();
             this.txtClassInput = new System.Windows.Forms.TextBox();
             this.btnAddClass = new System.Windows.Forms.Button();
+            this.btnSaveXML = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox1.Location = new System.Drawing.Point(51, 39);
+            this.pictureBox1.Location = new System.Drawing.Point(3, 1);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(768, 439);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -210,7 +210,7 @@
             // lblImageCountlabel
             // 
             this.lblImageCountlabel.AutoSize = true;
-            this.lblImageCountlabel.Location = new System.Drawing.Point(656, 520);
+            this.lblImageCountlabel.Location = new System.Drawing.Point(777, 263);
             this.lblImageCountlabel.Name = "lblImageCountlabel";
             this.lblImageCountlabel.Size = new System.Drawing.Size(70, 13);
             this.lblImageCountlabel.TabIndex = 20;
@@ -219,7 +219,7 @@
             // lblImgCount
             // 
             this.lblImgCount.AutoSize = true;
-            this.lblImgCount.Location = new System.Drawing.Point(732, 520);
+            this.lblImgCount.Location = new System.Drawing.Point(853, 263);
             this.lblImgCount.Name = "lblImgCount";
             this.lblImgCount.Size = new System.Drawing.Size(13, 13);
             this.lblImgCount.TabIndex = 21;
@@ -248,35 +248,26 @@
             // listBoxImageClasses
             // 
             this.listBoxImageClasses.FormattingEnabled = true;
-            this.listBoxImageClasses.Location = new System.Drawing.Point(850, 63);
+            this.listBoxImageClasses.Location = new System.Drawing.Point(780, 63);
             this.listBoxImageClasses.Name = "listBoxImageClasses";
-            this.listBoxImageClasses.Size = new System.Drawing.Size(279, 186);
+            this.listBoxImageClasses.Size = new System.Drawing.Size(363, 186);
             this.listBoxImageClasses.TabIndex = 24;
             this.listBoxImageClasses.SelectedIndexChanged += new System.EventHandler(this.listBoxImageClasses_SelectedIndexChanged);
             // 
             // listBoxImages
             // 
             this.listBoxImages.FormattingEnabled = true;
-            this.listBoxImages.Location = new System.Drawing.Point(850, 279);
+            this.listBoxImages.Location = new System.Drawing.Point(777, 279);
             this.listBoxImages.Name = "listBoxImages";
-            this.listBoxImages.Size = new System.Drawing.Size(279, 199);
+            this.listBoxImages.Size = new System.Drawing.Size(366, 160);
             this.listBoxImages.TabIndex = 25;
             this.listBoxImages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBoxImages_KeyDown);
             // 
-            // lblImageSelection
-            // 
-            this.lblImageSelection.AutoSize = true;
-            this.lblImageSelection.Location = new System.Drawing.Point(847, 263);
-            this.lblImageSelection.Name = "lblImageSelection";
-            this.lblImageSelection.Size = new System.Drawing.Size(41, 13);
-            this.lblImageSelection.TabIndex = 26;
-            this.lblImageSelection.Text = "Images";
-            // 
             // txtClassInput
             // 
-            this.txtClassInput.Location = new System.Drawing.Point(850, 37);
+            this.txtClassInput.Location = new System.Drawing.Point(780, 37);
             this.txtClassInput.Name = "txtClassInput";
-            this.txtClassInput.Size = new System.Drawing.Size(199, 20);
+            this.txtClassInput.Size = new System.Drawing.Size(269, 20);
             this.txtClassInput.TabIndex = 27;
             // 
             // btnAddClass
@@ -289,14 +280,25 @@
             this.btnAddClass.UseVisualStyleBackColor = true;
             this.btnAddClass.Click += new System.EventHandler(this.btnAddClass_Click);
             // 
+            // btnSaveXML
+            // 
+            this.btnSaveXML.Enabled = false;
+            this.btnSaveXML.Location = new System.Drawing.Point(361, 510);
+            this.btnSaveXML.Name = "btnSaveXML";
+            this.btnSaveXML.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveXML.TabIndex = 29;
+            this.btnSaveXML.Text = "Save Annotation";
+            this.btnSaveXML.UseVisualStyleBackColor = true;
+            this.btnSaveXML.Click += new System.EventHandler(this.btnSaveXML_Click);
+            // 
             // LabelImagesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1155, 756);
+            this.Controls.Add(this.btnSaveXML);
             this.Controls.Add(this.btnAddClass);
             this.Controls.Add(this.txtClassInput);
-            this.Controls.Add(this.lblImageSelection);
             this.Controls.Add(this.listBoxImages);
             this.Controls.Add(this.listBoxImageClasses);
             this.Controls.Add(this.btnNext);
@@ -355,9 +357,9 @@
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.ListBox listBoxImageClasses;
         private System.Windows.Forms.ListBox listBoxImages;
-        private System.Windows.Forms.Label lblImageSelection;
         private System.Windows.Forms.TextBox txtClassInput;
         private System.Windows.Forms.Button btnAddClass;
+        private System.Windows.Forms.Button btnSaveXML;
     }
 }
 
