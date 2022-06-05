@@ -50,7 +50,7 @@ namespace ScreenRecordCapture.Annotation
                 this.startPoint = point2;
                 this.endPoint = point1;
             }
-            boundingBox = new Rectangle(startPoint, new Size(Math.Abs(endPoint.X-startPoint.X), Math.Abs(endPoint.Y-startPoint.X)));
+            boundingBox = new Rectangle(startPoint, new Size(Math.Abs(endPoint.X-startPoint.X), Math.Abs(endPoint.Y-startPoint.Y)));
             selectedResizeCircle = SelectCircle.BottomRightCorner;
         }
         private Point clickOffset;

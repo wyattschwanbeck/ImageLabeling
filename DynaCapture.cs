@@ -207,7 +207,7 @@ namespace ScreenRecordCapture
                 XmlDocument str = new XmlDocument();
                 
                 str.LoadXml(xmlStr);
-                var resultxMin = str.SelectNodes("/annotation/object/bndbox/xmax");
+                var resultxMin = str.SelectNodes("/annotation/object/bndbox/xmin");
                 var resultxMax = str.SelectNodes("/annotation/object/bndbox/xmax");
                 var resultyMin = str.SelectNodes("/annotation/object/bndbox/ymin");
                 var resultyMax = str.SelectNodes("/annotation/object/bndbox/ymax");
@@ -219,7 +219,8 @@ namespace ScreenRecordCapture
                     for (int i = 0; i < resultxMin.Count; i++)
                     {
                         this.boundingBoxes.Add(new BoundingBox(new Point(int.Parse(resultxMin[i].InnerText), int.Parse(resultyMin[i].InnerText)),
-                            new Point(int.Parse(resultxMax[i].InnerText), int.Parse(resultyMax[i].InnerText)), resultLabels[i].InnerText));
+                        new Point(int.Parse(resultxMax[i].InnerText), int.Parse(resultyMax[i].InnerText)), resultLabels[i].InnerText));
+                    this.SelectedBoundingBox = this.boundingBoxes.Last();
                     }
                     this.pictureBox1.Invalidate();
                 //}
@@ -313,16 +314,16 @@ namespace ScreenRecordCapture
                     
                     writer.WriteStartElement("bndbox");
                     writer.WriteStartElement("xmin");
-                    writer.WriteString(boundingBox.startPoint.X.ToString());
+                    writer.WriteString(boundingBox.boundingBox.X.ToString());
                     writer.WriteEndElement();
                     writer.WriteStartElement("ymin");
-                    writer.WriteString(boundingBox.startPoint.Y.ToString());
+                    writer.WriteString(boundingBox.boundingBox.Y.ToString());
                     writer.WriteEndElement();
                     writer.WriteStartElement("xmax");
-                    writer.WriteString(boundingBox.endPoint.X.ToString());
+                    writer.WriteString((boundingBox.boundingBox.X+boundingBox.boundingBox.Width).ToString());
                     writer.WriteEndElement();
                     writer.WriteStartElement("ymax");
-                    writer.WriteString(boundingBox.endPoint.Y.ToString());
+                    writer.WriteString((boundingBox.boundingBox.Y+boundingBox.boundingBox.Height).ToString());
                     writer.WriteEndElement();
                     //End Bounding Box
                     writer.WriteEndElement();
