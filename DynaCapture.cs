@@ -212,9 +212,6 @@ namespace ScreenRecordCapture
                 var resultyMin = str.SelectNodes("/annotation/object/bndbox/ymin");
                 var resultyMax = str.SelectNodes("/annotation/object/bndbox/ymax");
                 var resultLabels = str.SelectNodes("/annotation/object/name");
-                //try
-                //{
-
 
                     for (int i = 0; i < resultxMin.Count; i++)
                     {
@@ -223,11 +220,7 @@ namespace ScreenRecordCapture
                     this.SelectedBoundingBox = this.boundingBoxes.Last();
                     }
                     this.pictureBox1.Invalidate();
-                //}
-                //catch(Exception except)
-                //{ Console.WriteLine(except.Message);
-                //}
-                //Console.WriteLine(result);
+
             }
 
         }
@@ -266,16 +259,21 @@ namespace ScreenRecordCapture
 
         private void btnSaveXML_Click(object sender, EventArgs e)
         {
+            SaveBoundingBoxes();
+        }
+
+        private void SaveBoundingBoxes()
+        {
             //https://towardsdatascience.com/coco-data-format-for-object-detection-a4c5eaf518c5#:~:text=Pascal%20VOC%20is%20an%20XML,for%20training%2C%20testing%20and%20validation.
-            FileInfo fi =_Imgfiles[this._selectedIndex];
+            FileInfo fi = _Imgfiles[this._selectedIndex];
             string[] parentFolders = fi.FullName.Split('\\');
             DirectoryInfo directoryInfo = new DirectoryInfo(fi.Directory.FullName);
-            
+
             using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace("jpg", "xml")))
             {
                 writer.WriteStartElement("annotation");
                 writer.WriteStartElement("folder");
-                writer.WriteString(parentFolders[parentFolders.Length-1]);
+                writer.WriteString(parentFolders[parentFolders.Length - 1]);
                 writer.WriteEndElement();
                 writer.WriteStartElement("filename");
                 writer.WriteString(fi.Name);
@@ -296,7 +294,7 @@ namespace ScreenRecordCapture
                 //End Size
                 writer.WriteEndElement();
 
-                foreach(BoundingBox boundingBox in boundingBoxes)
+                foreach (BoundingBox boundingBox in boundingBoxes)
                 {
                     writer.WriteStartElement("object");
                     writer.WriteStartElement("name");
@@ -311,7 +309,7 @@ namespace ScreenRecordCapture
                     writer.WriteStartElement("difficult");
                     writer.WriteString("1");
                     writer.WriteEndElement();
-                    
+
                     writer.WriteStartElement("bndbox");
                     writer.WriteStartElement("xmin");
                     writer.WriteString(boundingBox.boundingBox.X.ToString());
@@ -320,10 +318,10 @@ namespace ScreenRecordCapture
                     writer.WriteString(boundingBox.boundingBox.Y.ToString());
                     writer.WriteEndElement();
                     writer.WriteStartElement("xmax");
-                    writer.WriteString((boundingBox.boundingBox.X+boundingBox.boundingBox.Width).ToString());
+                    writer.WriteString((boundingBox.boundingBox.X + boundingBox.boundingBox.Width).ToString());
                     writer.WriteEndElement();
                     writer.WriteStartElement("ymax");
-                    writer.WriteString((boundingBox.boundingBox.Y+boundingBox.boundingBox.Height).ToString());
+                    writer.WriteString((boundingBox.boundingBox.Y + boundingBox.boundingBox.Height).ToString());
                     writer.WriteEndElement();
                     //End Bounding Box
                     writer.WriteEndElement();
@@ -335,8 +333,8 @@ namespace ScreenRecordCapture
                 //End Annotation
                 writer.WriteEndElement();
                 writer.Flush();
-                
-                
+
+
             }
         }
     }
