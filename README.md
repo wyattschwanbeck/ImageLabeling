@@ -12,3 +12,4 @@ Multiple Classes <br>
 Add functionality to change picture selection with listbox and key presses. (include a scroll bar)
 Add zoom and image frame resize to handle larger pictures<br>
 Add toggles for annotations: truncated, difficult, & pose sub-types <br>
+Make bounding boxes deleteable
