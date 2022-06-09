@@ -200,6 +200,7 @@ namespace ScreenRecordCapture.Annotation
         
         public void DrawBoundingBox(object sender, System.Windows.Forms.PaintEventArgs e)
         {
+            //e.Graphics.
             e.Graphics.DrawString(this.label, SystemFonts.DefaultFont,selectionBrush, new PointF(boundingBox.Location.X, boundingBox.Location.Y - 12));
             e.Graphics.DrawRectangle(selectionPen, boundingBox);
         }

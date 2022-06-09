@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.HeightLbl = new System.Windows.Forms.Label();
             this.WidthLbl = new System.Windows.Forms.Label();
             this.BaseHeightTxt = new System.Windows.Forms.TextBox();
@@ -56,22 +55,11 @@
             this.btnAddClass = new System.Windows.Forms.Button();
             this.btnSaveXML = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 1);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(768, 439);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
-            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
-            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
             // HeightLbl
             // 
@@ -196,7 +184,7 @@
             // txtImgDirectory
             // 
             this.txtImgDirectory.Enabled = false;
-            this.txtImgDirectory.Location = new System.Drawing.Point(209, 484);
+            this.txtImgDirectory.Location = new System.Drawing.Point(206, 506);
             this.txtImgDirectory.Name = "txtImgDirectory";
             this.txtImgDirectory.Size = new System.Drawing.Size(340, 20);
             this.txtImgDirectory.TabIndex = 17;
@@ -204,7 +192,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(122, 487);
+            this.label1.Location = new System.Drawing.Point(119, 509);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 13);
             this.label1.TabIndex = 18;
@@ -212,7 +200,7 @@
             // 
             // selectFolder
             // 
-            this.selectFolder.Location = new System.Drawing.Point(555, 482);
+            this.selectFolder.Location = new System.Drawing.Point(552, 504);
             this.selectFolder.Name = "selectFolder";
             this.selectFolder.Size = new System.Drawing.Size(112, 23);
             this.selectFolder.TabIndex = 19;
@@ -241,7 +229,7 @@
             // btnPrevious
             // 
             this.btnPrevious.Enabled = false;
-            this.btnPrevious.Location = new System.Drawing.Point(266, 510);
+            this.btnPrevious.Location = new System.Drawing.Point(263, 532);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(75, 23);
             this.btnPrevious.TabIndex = 22;
@@ -252,7 +240,7 @@
             // btnNext
             // 
             this.btnNext.Enabled = false;
-            this.btnNext.Location = new System.Drawing.Point(452, 510);
+            this.btnNext.Location = new System.Drawing.Point(449, 532);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 23;
@@ -298,7 +286,7 @@
             // btnSaveXML
             // 
             this.btnSaveXML.Enabled = false;
-            this.btnSaveXML.Location = new System.Drawing.Point(361, 510);
+            this.btnSaveXML.Location = new System.Drawing.Point(358, 532);
             this.btnSaveXML.Name = "btnSaveXML";
             this.btnSaveXML.Size = new System.Drawing.Size(75, 23);
             this.btnSaveXML.TabIndex = 29;
@@ -309,7 +297,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(533, 512);
+            this.checkBox1.Location = new System.Drawing.Point(530, 534);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(93, 17);
             this.checkBox1.TabIndex = 30;
@@ -317,11 +305,34 @@
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.Click += new System.EventHandler(this.checkBox1_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(745, 469);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 32;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(745, 466);
+            this.panel1.TabIndex = 31;
+            // 
             // LabelImagesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1155, 564);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.btnSaveXML);
             this.Controls.Add(this.btnAddClass);
@@ -348,19 +359,17 @@
             this.Controls.Add(this.BaseHeightTxt);
             this.Controls.Add(this.WidthLbl);
             this.Controls.Add(this.HeightLbl);
-            this.Controls.Add(this.pictureBox1);
             this.Name = "LabelImagesWindow";
             this.Text = "Label Images";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LabelImagesWindow_KeyPress);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label HeightLbl;
         private System.Windows.Forms.Label WidthLbl;
         private System.Windows.Forms.TextBox BaseHeightTxt;
@@ -388,6 +397,8 @@
         private System.Windows.Forms.Button btnAddClass;
         private System.Windows.Forms.Button btnSaveXML;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 
