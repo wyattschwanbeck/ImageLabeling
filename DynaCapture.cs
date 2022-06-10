@@ -140,6 +140,7 @@ namespace ScreenRecordCapture
                 }
                 SelectedBoundingBox.setSelectedCircles(new Point(-1, -1));
             }
+            this.pictureBox1.Focus();
             this.pictureBox1.Invalidate();
             
 
@@ -267,11 +268,6 @@ namespace ScreenRecordCapture
 
         }
 
-        private void LabelImagesWindow_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
-        }
-
         private void btnAddClass_Click(object sender, EventArgs e)
         {
             //TODO Validate input is onlyCharacters and numbers via regex
@@ -385,40 +381,34 @@ namespace ScreenRecordCapture
             }
         }
 
-        private void checkBox1_Click(object sender, EventArgs e)
+
+        private void checkBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            checkBox1.Checked = !checkBox1.Checked;
+            //checkBox1.Checked = !checkBox1.Checked;
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-            //if (pictureBox1.Image != null && _classLabel > -1)
-            //{
-
-            //    foreach (BoundingBox box in boundingBoxes)
-            //    {
-            //        box.DrawBoundingBox(sender, e);
-            //    }
-            //    if (SelectedBoundingBox != null && SelectedBoundingBox.boundingBox.Width > 0 && SelectedBoundingBox.boundingBox.Height > 0)
-            //    {
-            //        SelectedBoundingBox.DrawSelectCircles(sender, e);
-            //    }
-            //}
-        }
-
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        private void LabelImagesWindow_KeyDown(object sender, KeyEventArgs e)
         {
 
         }
-
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        private void DeleteSelectedBoundingBox()
         {
-
+            if (SelectedBoundingBox != null)
+            {
+                boundingBoxes.Remove(SelectedBoundingBox);
+                SelectedBoundingBox = null;
+                this.pictureBox1.Invalidate();
+            }
         }
 
-        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        private void pictureBox1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-
+            switch (e.KeyCode)
+            {
+                case Keys.Delete:
+                    DeleteSelectedBoundingBox();
+                    break;
+            }
         }
     }
 
