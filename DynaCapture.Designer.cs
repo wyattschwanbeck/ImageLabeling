@@ -260,10 +260,12 @@
             // listBoxImages
             // 
             this.listBoxImages.FormattingEnabled = true;
+            this.listBoxImages.HorizontalScrollbar = true;
             this.listBoxImages.Location = new System.Drawing.Point(777, 279);
             this.listBoxImages.Name = "listBoxImages";
             this.listBoxImages.Size = new System.Drawing.Size(366, 160);
             this.listBoxImages.TabIndex = 25;
+            this.listBoxImages.SelectedIndexChanged += new System.EventHandler(this.listBoxImages_SelectedIndexChanged);
             this.listBoxImages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBoxImages_KeyDown);
             // 
             // txtClassInput

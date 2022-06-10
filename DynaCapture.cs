@@ -299,11 +299,6 @@ namespace ScreenRecordCapture
             double AdjH = pictureBox1.Height;
 
 
-            if (SelectedBoundingBox.boundingBox.Size.Width > 0)
-            {
-                
-            }
-
             using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace("jpg", "xml")))
             {
                 writer.WriteStartElement("annotation");
@@ -409,6 +404,13 @@ namespace ScreenRecordCapture
                     DeleteSelectedBoundingBox();
                     break;
             }
+        }
+
+        private void listBoxImages_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _selectedIndex = listBoxImages.SelectedIndex;
+            setImage(new Bitmap(_Imgfiles[_selectedIndex].FullName));
+            checkSaved();
         }
     }
 
