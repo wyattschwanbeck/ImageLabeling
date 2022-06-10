@@ -11,6 +11,6 @@ Multiple Classes <br>
 ## TODO
 Add functionality to change picture selection with listbox and key presses. (include a scroll bar)<br>
 <s>Adjusted logic to account for rendering changes to handle larger pictures</s><br>
-Add toggles for annotations: truncated, difficult, & pose sub-types <br>
-Make bounding boxes deleteable
+Add toggles for annotations: truncated, difficult, & pose sub-types<br>
+<s>Make bounding boxes deleteable </s>
 
