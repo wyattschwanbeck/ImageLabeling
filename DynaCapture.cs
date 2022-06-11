@@ -181,7 +181,7 @@ namespace ScreenRecordCapture
             {
                 txtImgDirectory.Text = FolderBrowserDialogSelectImgDir.SelectedPath;
                 DirectoryInfo imgInfo = new DirectoryInfo(FolderBrowserDialogSelectImgDir.SelectedPath);
-                this._Imgfiles = imgInfo.EnumerateFiles("*jpg",SearchOption.AllDirectories).ToList();
+                this._Imgfiles = imgInfo.EnumerateFiles("*png",SearchOption.AllDirectories).ToList();
                 this.lblImgCount.Text = this._Imgfiles.Count.ToString();
                 setImage(new Bitmap(this._Imgfiles.First().FullName));
                 this.listBoxImages.Items.Clear();
@@ -209,7 +209,7 @@ namespace ScreenRecordCapture
         private void checkSaved()
         {
             FileInfo fi = _Imgfiles[this._selectedIndex];
-            string xmlCounterpart = fi.Directory.FullName + '\\' + fi.Name.Replace("jpg","xml");
+            string xmlCounterpart = fi.Directory.FullName + '\\' + fi.Name.Replace("png","xml");
             
             if (File.Exists(xmlCounterpart))
             {
@@ -299,7 +299,7 @@ namespace ScreenRecordCapture
             double AdjH = pictureBox1.Height;
 
 
-            using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace("jpg", "xml")))
+            using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace("png", "xml")))
             {
                 writer.WriteStartElement("annotation");
                 writer.WriteStartElement("folder");
@@ -319,7 +319,8 @@ namespace ScreenRecordCapture
                 writer.WriteString(this.pictureBox1.Image.Height.ToString());
                 writer.WriteEndElement();
                 writer.WriteStartElement("depth");
-                writer.WriteString("3");//System.Drawing.Image.GetPixelFormatSize(this.pictureBox1.BackgroundImage.PixelFormat).ToString());
+                
+                writer.WriteString(Image.GetPixelFormatSize(pictureBox1.Image.PixelFormat).ToString());//System.Drawing.Image.GetPixelFormatSize(this.pictureBox1.BackgroundImage.PixelFormat).ToString());
                 writer.WriteEndElement();
                 //End Size
                 writer.WriteEndElement();

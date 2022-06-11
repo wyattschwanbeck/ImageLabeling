@@ -57,6 +57,7 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.checkBoxMoveAllBoxes = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -330,11 +331,22 @@
             this.panel1.Size = new System.Drawing.Size(745, 466);
             this.panel1.TabIndex = 31;
             // 
+            // checkBoxMoveAllBoxes
+            // 
+            this.checkBoxMoveAllBoxes.AutoSize = true;
+            this.checkBoxMoveAllBoxes.Location = new System.Drawing.Point(12, 504);
+            this.checkBoxMoveAllBoxes.Name = "checkBoxMoveAllBoxes";
+            this.checkBoxMoveAllBoxes.Size = new System.Drawing.Size(99, 17);
+            this.checkBoxMoveAllBoxes.TabIndex = 32;
+            this.checkBoxMoveAllBoxes.Text = "Move All Boxes";
+            this.checkBoxMoveAllBoxes.UseVisualStyleBackColor = true;
+            // 
             // LabelImagesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1155, 564);
+            this.Controls.Add(this.checkBoxMoveAllBoxes);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnSaveXML);
@@ -401,6 +413,7 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox checkBoxMoveAllBoxes;
     }
 }
 
