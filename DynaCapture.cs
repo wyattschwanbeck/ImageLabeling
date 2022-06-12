@@ -12,6 +12,9 @@ using System.IO;
 using ScreenRecordCapture.Annotation;
 using System.Xml;
 using System.Xml.Linq;
+using System.Windows.Media.Imaging;
+using Emgu.CV;
+using Emgu.CV.Structure;
 
 namespace ScreenRecordCapture
 {
@@ -21,14 +24,21 @@ namespace ScreenRecordCapture
         private Dictionary<string, List<BoundingBox>> ImgBoundingBoxes;
         private int _selectedIndex;
         private int _classLabel=-1;
+        private BitmapImage _img;
+        private Mat[] _imgMat;
+        private MeanShiftHelper msh;
         public LabelImagesWindow()
         {
+            MCvScalar min = new MCvScalar(0, 0, 17);
+            MCvScalar max = new MCvScalar(180, 255, 255);
+            msh = new MeanShiftHelper(min, max);
+
             ImgBoundingBoxes = new Dictionary<string, List<BoundingBox>>();
             //DoubleBuffered = true;
             //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             boundingBoxes = new List<BoundingBox>();
             InitializeComponent();
-            
+            _imgMat = new Mat[2];
             //ScreensToChooseFrom.DataSource = Enumerable.Range(1, Screen.AllScreens.Length).ToList();
             
             //setImage(CaptureMyScreen(GetScreen()));
@@ -152,12 +162,22 @@ namespace ScreenRecordCapture
         {
             using (tempImg)
             {
-
-
+                if (_imgMat[0] != null)
+                {
+                    _imgMat[1] = _imgMat[0];
+                    CvInvoke.CvtColor(CvInvoke.Imread(_Imgfiles[_selectedIndex].FullName, Emgu.CV.CvEnum.ImreadModes.Unchanged), _imgMat[0], Emgu.CV.CvEnum.ColorConversion.Bgr2Hsv);
+                }
+                else
+                {
+                    _imgMat[0] = new Mat();
+                    CvInvoke.CvtColor(CvInvoke.Imread(_Imgfiles[_selectedIndex].FullName, Emgu.CV.CvEnum.ImreadModes.Unchanged), _imgMat[0], Emgu.CV.CvEnum.ColorConversion.Bgr2Hsv);
+                }
+                    
+                _img = new BitmapImage(new Uri(_Imgfiles[_selectedIndex].FullName));
                 Rectangle rect = new Rectangle(0, 0, tempImg.Width, tempImg.Height);
 
                 PixelFormat format = tempImg.PixelFormat;
-
+                //BitmapSource()
                 this.pictureBox1.Image = new Bitmap(tempImg);
                 this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                 BaseWidthTxt.Text = tempImg.Width.ToString();
@@ -251,6 +271,18 @@ namespace ScreenRecordCapture
                     }
                     this.pictureBox1.Invalidate();
 
+            } else
+            {
+                //File doesn't exist. Use meanshift to check existing bounding boxes to see if they ought to move
+                if (_imgMat[1] != null)
+                {
+                    for (int i = 0; i < this.boundingBoxes.Count; i++)
+                    {
+                        this.boundingBoxes[i].boundingBox = msh.Shift(_imgMat[0].ToImage<Hsv, Byte>(), _imgMat[1].ToImage<Hsv, Byte>(), boundingBoxes[i].boundingBox);
+                        
+                    }
+                    this.pictureBox1.Invalidate();
+                }
             }
 
         }
@@ -319,8 +351,8 @@ namespace ScreenRecordCapture
                 writer.WriteString(this.pictureBox1.Image.Height.ToString());
                 writer.WriteEndElement();
                 writer.WriteStartElement("depth");
-                
-                writer.WriteString(Image.GetPixelFormatSize(pictureBox1.Image.PixelFormat).ToString());//System.Drawing.Image.GetPixelFormatSize(this.pictureBox1.BackgroundImage.PixelFormat).ToString());
+                //int bitsPerPixel = source.Format.BitsPerPixel;
+                writer.WriteString(_img.Format.BitsPerPixel.ToString());//System.Drawing.Image.GetPixelFormatSize(this.pictureBox1.BackgroundImage.PixelFormat).ToString());
                 writer.WriteEndElement();
                 //End Size
                 writer.WriteEndElement();
