@@ -29,7 +29,7 @@ namespace ScreenRecordCapture
         private MeanShiftHelper msh;
         public LabelImagesWindow()
         {
-            MCvScalar min = new MCvScalar(0, 0, 17);
+            MCvScalar min = new MCvScalar(0, 0, 0);
             MCvScalar max = new MCvScalar(180, 255, 255);
             msh = new MeanShiftHelper(min, max);
 
@@ -278,9 +278,22 @@ namespace ScreenRecordCapture
                 {
                     for (int i = 0; i < this.boundingBoxes.Count; i++)
                     {
-                        this.boundingBoxes[i].boundingBox = msh.Shift(_imgMat[0].ToImage<Hsv, Byte>(), _imgMat[1].ToImage<Hsv, Byte>(), boundingBoxes[i].boundingBox);
-                        
-                    }
+                        //Point realXYMin = RenderAdjustments.ConvertToImageCoords(boundingBoxes[i].boundingBox.Location,
+                        //                                pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
+                        //Point realXYMax = RenderAdjustments.ConvertToImageCoords(new Point(boundingBoxes[i].boundingBox.Right, boundingBoxes[i].boundingBox.Bottom),
+                        //                                    pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
+                        Double zoomW = ((Double)pictureBox1.ClientRectangle.Width / (Double)pictureBox1.Image.Width);
+                        Double zoomH = ((Double)pictureBox1.Height / (Double)pictureBox1.Image.Height);
+                        Double zoomActual = Math.Min(zoomW, zoomH);
+                        Rectangle tempRect = msh.Shift(_imgMat[0].ToImage<Bgr, byte>(), _imgMat[1].ToImage<Bgr, byte>(), this.boundingBoxes[i].boundingBox, zoomActual);//new Rectangle(realXYMin, new Size(realXYMax.X-realXYMin.X, realXYMax.Y-realXYMin.Y)));
+                        //Point adjXYMin = RenderAdjustments.ConvertFromImageCoords(tempRect.Location,
+                        //                                pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
+                        //Point adjXYMax = RenderAdjustments.ConvertFromImageCoords(new Point(tempRect.Right, tempRect.Bottom),
+                                                            //pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
+                        //Rectangle changedRect = new Rectangle(adjXYMin, new Size(adjXYMax.X - adjXYMin.X, adjXYMax.Y - adjXYMin.Y));
+                        //Point boundingBoxes[i]..Location;
+                        boundingBoxes[i].boundingBox = tempRect;
+                }
                     this.pictureBox1.Invalidate();
                 }
             }
