@@ -251,7 +251,7 @@ namespace ScreenRecordCapture
         private void checkSaved()
         {
             FileInfo fi = _Imgfiles[this._selectedIndex];
-            string xmlCounterpart = fi.Directory.FullName + '\\' + fi.Name.Replace("png","xml");
+            string xmlCounterpart = fi.Directory.FullName + '\\' + fi.Name.Replace(_Imgfiles[this._selectedIndex].Extension,"xml");
             
             if (File.Exists(xmlCounterpart))
             {
@@ -307,14 +307,14 @@ namespace ScreenRecordCapture
                         Double zoomW = ((Double)pictureBox1.ClientRectangle.Width / (Double)pictureBox1.Image.Width);
                         Double zoomH = ((Double)pictureBox1.Height / (Double)pictureBox1.Image.Height);
                         Double zoomActual = Math.Min(zoomW, zoomH);
-                        Point newLoc = msh.Detect_object(_imgMat[0].ToImage<Gray, byte>(), _imgMat[1].ToImage<Gray, byte>().GetSubRect(this.boundingBoxes[i].boundingBox));//msh.Shift(_imgMat[0].ToImage<Bgr, byte>(), _imgMat[1].ToImage<Bgr, byte>(), this.boundingBoxes[i].boundingBox, zoomActual);//new Rectangle(realXYMin, new Size(realXYMax.X-realXYMin.X, realXYMax.Y-realXYMin.Y)));
+                        //Point newLoc = msh.Detect_object(_imgMat[0].ToImage<Gray, byte>(), _imgMat[1].ToImage<Gray, byte>().GetSubRect(this.boundingBoxes[i].boundingBox));//msh.Shift(_imgMat[0].ToImage<Bgr, byte>(), _imgMat[1].ToImage<Bgr, byte>(), this.boundingBoxes[i].boundingBox, zoomActual);//new Rectangle(realXYMin, new Size(realXYMax.X-realXYMin.X, realXYMax.Y-realXYMin.Y)));
                         //Point adjXYMin = RenderAdjustments.ConvertFromImageCoords(tempRect.Location,
                         //                                pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
                         //Point adjXYMax = RenderAdjustments.ConvertFromImageCoords(new Point(tempRect.Right, tempRect.Bottom),
                                                             //pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
                         //Rectangle changedRect = new Rectangle(adjXYMin, new Size(adjXYMax.X - adjXYMin.X, adjXYMax.Y - adjXYMin.Y));
                         //Point boundingBoxes[i]..Location;
-                        boundingBoxes[i].boundingBox = new Rectangle(newLoc, boundingBoxes[i].boundingBox.Size);
+                        //boundingBoxes[i].boundingBox = new Rectangle(newLoc, boundingBoxes[i].boundingBox.Size);
                 }
                     this.pictureBox1.Invalidate();
                 }
@@ -366,7 +366,7 @@ namespace ScreenRecordCapture
             double AdjH = pictureBox1.Height;
 
 
-            using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace("png", "xml")))
+            using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace(this._Imgfiles[this._selectedIndex].Extension, "xml")))
             {
                 writer.WriteStartElement("annotation");
                 writer.WriteStartElement("folder");
