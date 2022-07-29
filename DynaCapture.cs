@@ -27,9 +27,14 @@ namespace ScreenRecordCapture
         private BitmapImage _img;
         private Mat[] _imgMat;
         private MeanShiftHelper msh;
+        private string[] searchPatterns;
         public LabelImagesWindow()
         {
-            MCvScalar min = new MCvScalar(0, 0, 0);
+            searchPatterns = new string[3];
+            searchPatterns[0] = "*.png";
+            searchPatterns[1] = "*.jpg";
+            searchPatterns[2] = "*.jpeg";
+            MCvScalar min = new MCvScalar(0, 60, 32);
             MCvScalar max = new MCvScalar(180, 255, 255);
             msh = new MeanShiftHelper(min, max);
 
@@ -164,7 +169,7 @@ namespace ScreenRecordCapture
             {
                 if (_imgMat[0] != null)
                 {
-                    _imgMat[1] = _imgMat[0];
+                    _imgMat[1] = _imgMat[0].Clone();
                     CvInvoke.CvtColor(CvInvoke.Imread(_Imgfiles[_selectedIndex].FullName, Emgu.CV.CvEnum.ImreadModes.Unchanged), _imgMat[0], Emgu.CV.CvEnum.ColorConversion.Bgr2Hsv);
                 }
                 else
@@ -199,19 +204,36 @@ namespace ScreenRecordCapture
             //FolderBrowserDialogSelectImgDir.ShowDialog();
             if(FolderBrowserDialogSelectImgDir.ShowDialog() == DialogResult.OK)
             {
-                txtImgDirectory.Text = FolderBrowserDialogSelectImgDir.SelectedPath;
                 DirectoryInfo imgInfo = new DirectoryInfo(FolderBrowserDialogSelectImgDir.SelectedPath);
-                this._Imgfiles = imgInfo.EnumerateFiles("*png",SearchOption.AllDirectories).ToList();
-                this.lblImgCount.Text = this._Imgfiles.Count.ToString();
-                setImage(new Bitmap(this._Imgfiles.First().FullName));
+                
+                    
+                   List<string> filesFound = searchPatterns.AsParallel()
+                    .SelectMany(searchPattern =>
+                    Directory.EnumerateFiles(imgInfo.FullName,searchPattern, SearchOption.AllDirectories)).ToList();
+                
+                txtImgDirectory.Text = FolderBrowserDialogSelectImgDir.SelectedPath;
+                //DirectoryInfo imgInfo = new DirectoryInfo(FolderBrowserDialogSelectImgDir.SelectedPath);
+                //this._Imgfiles = imgInfo.EnumerateFiles("*png|*jpg|*jpeg",SearchOption.AllDirectories).ToList();
+
+                
+                
                 this.listBoxImages.Items.Clear();
-                foreach (FileInfo fileInfo in this._Imgfiles)
-                    this.listBoxImages.Items.Add(fileInfo.FullName);
-                this.btnSaveXML.Enabled = true;
-                this._selectedIndex = 0;
-                checkSaved();
-                this.btnNext.Enabled = true;
-                this.btnPrevious.Enabled = true;
+                foreach (string fileInfo in filesFound)
+                {
+                    this._Imgfiles.Add(new FileInfo(fileInfo));
+                    this.listBoxImages.Items.Add(fileInfo);
+                }
+                if (this._Imgfiles.Count > 0)
+                {
+                    setImage(new Bitmap(this._Imgfiles.First().FullName));
+                    this.lblImgCount.Text = this._Imgfiles.Count.ToString();
+                    this.btnSaveXML.Enabled = true;
+                    this._selectedIndex = 0;
+                    checkSaved();
+                    this.btnNext.Enabled = true;
+                    this.btnPrevious.Enabled = true;
+                }
+                
             }
                 
         }
@@ -285,14 +307,14 @@ namespace ScreenRecordCapture
                         Double zoomW = ((Double)pictureBox1.ClientRectangle.Width / (Double)pictureBox1.Image.Width);
                         Double zoomH = ((Double)pictureBox1.Height / (Double)pictureBox1.Image.Height);
                         Double zoomActual = Math.Min(zoomW, zoomH);
-                        Rectangle tempRect = msh.Shift(_imgMat[0].ToImage<Bgr, byte>(), _imgMat[1].ToImage<Bgr, byte>(), this.boundingBoxes[i].boundingBox, zoomActual);//new Rectangle(realXYMin, new Size(realXYMax.X-realXYMin.X, realXYMax.Y-realXYMin.Y)));
+                        Point newLoc = msh.Detect_object(_imgMat[0].ToImage<Gray, byte>(), _imgMat[1].ToImage<Gray, byte>().GetSubRect(this.boundingBoxes[i].boundingBox));//msh.Shift(_imgMat[0].ToImage<Bgr, byte>(), _imgMat[1].ToImage<Bgr, byte>(), this.boundingBoxes[i].boundingBox, zoomActual);//new Rectangle(realXYMin, new Size(realXYMax.X-realXYMin.X, realXYMax.Y-realXYMin.Y)));
                         //Point adjXYMin = RenderAdjustments.ConvertFromImageCoords(tempRect.Location,
                         //                                pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
                         //Point adjXYMax = RenderAdjustments.ConvertFromImageCoords(new Point(tempRect.Right, tempRect.Bottom),
                                                             //pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
                         //Rectangle changedRect = new Rectangle(adjXYMin, new Size(adjXYMax.X - adjXYMin.X, adjXYMax.Y - adjXYMin.Y));
                         //Point boundingBoxes[i]..Location;
-                        boundingBoxes[i].boundingBox = tempRect;
+                        boundingBoxes[i].boundingBox = new Rectangle(newLoc, boundingBoxes[i].boundingBox.Size);
                 }
                     this.pictureBox1.Invalidate();
                 }
