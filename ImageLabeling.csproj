@@ -70,18 +70,18 @@
   <ItemGroup>
     <Compile Include="Annotation\BoundingBox.cs" />
     <Compile Include="Annotation\RenderAdjustments.cs" />
-    <Compile Include="DynaCapture.cs">
+    <Compile Include="Form_ImageLabeling.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DynaCapture.Designer.cs">
-      <DependentUpon>DynaCapture.cs</DependentUpon>
+    <Compile Include="Form_ImageLabeling.Designer.cs">
+      <DependentUpon>Form_ImageLabeling.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recording\FrameDetails.cs" />
     <Compile Include="Recording\RecordQueue.cs" />
-    <EmbeddedResource Include="DynaCapture.resx">
-      <DependentUpon>DynaCapture.cs</DependentUpon>
+    <EmbeddedResource Include="Form_ImageLabeling.resx">
+      <DependentUpon>Form_ImageLabeling.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
