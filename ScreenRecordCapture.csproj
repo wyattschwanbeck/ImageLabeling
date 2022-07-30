@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Annotation\BoundingBox.cs" />
-    <Compile Include="Annotation\MeanShift.cs" />
     <Compile Include="Annotation\RenderAdjustments.cs" />
     <Compile Include="DynaCapture.cs">
       <SubType>Form</SubType>

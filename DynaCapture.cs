@@ -13,8 +13,6 @@ using ScreenRecordCapture.Annotation;
 using System.Xml;
 using System.Xml.Linq;
 using System.Windows.Media.Imaging;
-using Emgu.CV;
-using Emgu.CV.Structure;
 
 namespace ScreenRecordCapture
 {
@@ -25,28 +23,17 @@ namespace ScreenRecordCapture
         private int _selectedIndex;
         private int _classLabel=-1;
         private BitmapImage _img;
-        private Mat[] _imgMat;
-        private MeanShiftHelper msh;
         private string[] searchPatterns;
         public LabelImagesWindow()
         {
             searchPatterns = new string[3];
-            searchPatterns[0] = "*.png";
-            searchPatterns[1] = "*.jpg";
-            searchPatterns[2] = "*.jpeg";
-            MCvScalar min = new MCvScalar(0, 60, 32);
-            MCvScalar max = new MCvScalar(180, 255, 255);
-            msh = new MeanShiftHelper(min, max);
-
+            searchPatterns[0] = @"png";
+            searchPatterns[1] = @"jpg";
+            searchPatterns[2] = @"jpeg";
             ImgBoundingBoxes = new Dictionary<string, List<BoundingBox>>();
-            //DoubleBuffered = true;
-            //this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
             boundingBoxes = new List<BoundingBox>();
             InitializeComponent();
-            _imgMat = new Mat[2];
-            //ScreensToChooseFrom.DataSource = Enumerable.Range(1, Screen.AllScreens.Length).ToList();
-            
-            //setImage(CaptureMyScreen(GetScreen()));
+
         }
 
 
@@ -167,22 +154,12 @@ namespace ScreenRecordCapture
         {
             using (tempImg)
             {
-                if (_imgMat[0] != null)
-                {
-                    _imgMat[1] = _imgMat[0].Clone();
-                    CvInvoke.CvtColor(CvInvoke.Imread(_Imgfiles[_selectedIndex].FullName, Emgu.CV.CvEnum.ImreadModes.Unchanged), _imgMat[0], Emgu.CV.CvEnum.ColorConversion.Bgr2Hsv);
-                }
-                else
-                {
-                    _imgMat[0] = new Mat();
-                    CvInvoke.CvtColor(CvInvoke.Imread(_Imgfiles[_selectedIndex].FullName, Emgu.CV.CvEnum.ImreadModes.Unchanged), _imgMat[0], Emgu.CV.CvEnum.ColorConversion.Bgr2Hsv);
-                }
                     
                 _img = new BitmapImage(new Uri(_Imgfiles[_selectedIndex].FullName));
                 Rectangle rect = new Rectangle(0, 0, tempImg.Width, tempImg.Height);
 
                 PixelFormat format = tempImg.PixelFormat;
-                //BitmapSource()
+
                 this.pictureBox1.Image = new Bitmap(tempImg);
                 this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                 BaseWidthTxt.Text = tempImg.Width.ToString();
@@ -205,11 +182,11 @@ namespace ScreenRecordCapture
             if(FolderBrowserDialogSelectImgDir.ShowDialog() == DialogResult.OK)
             {
                 DirectoryInfo imgInfo = new DirectoryInfo(FolderBrowserDialogSelectImgDir.SelectedPath);
-                
-                    
-                   List<string> filesFound = searchPatterns.AsParallel()
-                    .SelectMany(searchPattern =>
-                    Directory.EnumerateFiles(imgInfo.FullName,searchPattern, SearchOption.AllDirectories)).ToList();
+
+
+                List<string> filesFound = Directory.EnumerateFiles(imgInfo.FullName, "*", SearchOption.AllDirectories).AsParallel()
+                 .SelectMany(fileFound => searchPatterns.Select(pattern => fileFound.EndsWith(pattern) ? fileFound : null)).ToList();
+                    //);.ToList();
                 
                 txtImgDirectory.Text = FolderBrowserDialogSelectImgDir.SelectedPath;
                 //DirectoryInfo imgInfo = new DirectoryInfo(FolderBrowserDialogSelectImgDir.SelectedPath);
@@ -220,8 +197,12 @@ namespace ScreenRecordCapture
                 this.listBoxImages.Items.Clear();
                 foreach (string fileInfo in filesFound)
                 {
-                    this._Imgfiles.Add(new FileInfo(fileInfo));
-                    this.listBoxImages.Items.Add(fileInfo);
+                    if(fileInfo !=null)
+                    {
+                        this._Imgfiles.Add(new FileInfo(fileInfo));
+                        this.listBoxImages.Items.Add(fileInfo);
+                    }
+                    
                 }
                 if (this._Imgfiles.Count > 0)
                 {
@@ -251,7 +232,7 @@ namespace ScreenRecordCapture
         private void checkSaved()
         {
             FileInfo fi = _Imgfiles[this._selectedIndex];
-            string xmlCounterpart = fi.Directory.FullName + '\\' + fi.Name.Replace(_Imgfiles[this._selectedIndex].Extension,"xml");
+            string xmlCounterpart = fi.Directory.FullName + '\\' + fi.Name.Replace(_Imgfiles[this._selectedIndex].Extension,".xml");
             
             if (File.Exists(xmlCounterpart))
             {
@@ -293,32 +274,8 @@ namespace ScreenRecordCapture
                     }
                     this.pictureBox1.Invalidate();
 
-            } else
-            {
-                //File doesn't exist. Use meanshift to check existing bounding boxes to see if they ought to move
-                if (_imgMat[1] != null)
-                {
-                    for (int i = 0; i < this.boundingBoxes.Count; i++)
-                    {
-                        //Point realXYMin = RenderAdjustments.ConvertToImageCoords(boundingBoxes[i].boundingBox.Location,
-                        //                                pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
-                        //Point realXYMax = RenderAdjustments.ConvertToImageCoords(new Point(boundingBoxes[i].boundingBox.Right, boundingBoxes[i].boundingBox.Bottom),
-                        //                                    pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
-                        Double zoomW = ((Double)pictureBox1.ClientRectangle.Width / (Double)pictureBox1.Image.Width);
-                        Double zoomH = ((Double)pictureBox1.Height / (Double)pictureBox1.Image.Height);
-                        Double zoomActual = Math.Min(zoomW, zoomH);
-                        //Point newLoc = msh.Detect_object(_imgMat[0].ToImage<Gray, byte>(), _imgMat[1].ToImage<Gray, byte>().GetSubRect(this.boundingBoxes[i].boundingBox));//msh.Shift(_imgMat[0].ToImage<Bgr, byte>(), _imgMat[1].ToImage<Bgr, byte>(), this.boundingBoxes[i].boundingBox, zoomActual);//new Rectangle(realXYMin, new Size(realXYMax.X-realXYMin.X, realXYMax.Y-realXYMin.Y)));
-                        //Point adjXYMin = RenderAdjustments.ConvertFromImageCoords(tempRect.Location,
-                        //                                pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
-                        //Point adjXYMax = RenderAdjustments.ConvertFromImageCoords(new Point(tempRect.Right, tempRect.Bottom),
-                                                            //pictureBox1.ClientRectangle.Size, pictureBox1.Image.Size);
-                        //Rectangle changedRect = new Rectangle(adjXYMin, new Size(adjXYMax.X - adjXYMin.X, adjXYMax.Y - adjXYMin.Y));
-                        //Point boundingBoxes[i]..Location;
-                        //boundingBoxes[i].boundingBox = new Rectangle(newLoc, boundingBoxes[i].boundingBox.Size);
-                }
-                    this.pictureBox1.Invalidate();
-                }
-            }
+            } 
+            
 
         }
 
