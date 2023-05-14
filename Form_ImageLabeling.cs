@@ -178,6 +178,7 @@ namespace ScreenRecordCapture
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //Select Folder
             //FolderBrowserDialogSelectImgDir.ShowDialog();
             if(FolderBrowserDialogSelectImgDir.ShowDialog() == DialogResult.OK)
             {
@@ -323,7 +324,7 @@ namespace ScreenRecordCapture
             double AdjH = pictureBox1.Height;
 
 
-            using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace(this._Imgfiles[this._selectedIndex].Extension, "xml")))
+            using (XmlWriter writer = XmlWriter.Create(fi.Directory.FullName + '\\' + fi.Name.Replace(this._Imgfiles[this._selectedIndex].Extension, ".xml")))
             {
                 writer.WriteStartElement("annotation");
                 writer.WriteStartElement("folder");
